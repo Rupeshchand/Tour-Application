@@ -1,0 +1,1 @@
+import Tours from '../models/tours.model'
