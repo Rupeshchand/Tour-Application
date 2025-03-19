@@ -12,6 +12,10 @@ const tourSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  distance:{
+    type:String,
+    required: true
+  },
   price: {
     type: Number,
     required: true,
@@ -20,20 +24,23 @@ const tourSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  reviews: [
-    { type: mongoose.Schema.Types.ObjectId, required: true },
-    // {
-    //     id:{
-    //         type:mongoose.Schema.Types.ObjectId,
-    //         ref:"Reviews",
-    //         required:true
-    //     }
-    // }
-  ],
+  // reviews: [
+  //   { type: mongoose.Schema.Types.ObjectId, required: true },
+  //   // {
+  //   //     id:{
+  //   //         type:mongoose.Schema.Types.ObjectId,
+  //   //         ref:"Reviews",
+  //   //         required:true
+  //   //     }
+  //   // }
+  // ],
   photo: {
     type: String,
     required: true,
   },
-  featured: true,
+  featured: {
+    type:Boolean,
+    required: true
+  },
 });
 export default mongoose.model("Tours", tourSchema);
