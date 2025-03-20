@@ -1,6 +1,7 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 // import crypto from 'crypto'
 // crypto.randomBytes(256,(err,buffer)=>{
 //     if(err){
@@ -72,6 +73,42 @@ export const loginUser = async (req, res, next) => {
       .json({ success: true, message: "Login success", token, rest });
   } catch (error) {
     console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+//getall users
+export const getAllUsers = async (req, res, next) => {
+  try {
+    const user = await User.find().select("-password");
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Users not found" });
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "Users found", user });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+//edit user
+export const editUser = async (req, res, next) => {
+  const userId = req.params.id;
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "Invalid" });
+    }
+    await User.findByIdAndUpdate(userId, { $set: req.body }, { new: true });
+    return res.status(200).json({ success: true, message: "User edited" });
+  } catch (error) {
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });
