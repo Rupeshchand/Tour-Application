@@ -5,6 +5,8 @@ import cors from "cors";
 import mongoose from "mongoose";
 import tourRoutes from "./routes/tours.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import review from "./routes/reviews.routes.js";
+import booking from "./routes/booking.routes.js"
 const app = express();
 const port = process.env.PORT || 6000;
 const allowedUrls = ["http:localhost:5173"];
@@ -25,6 +27,8 @@ app.use(
 app.use(express.json());
 app.use("/api/tour", tourRoutes);
 app.use("/api/user", userRoutes);
+app.use("/api/review", review);
+app.use("/api/booking", booking)
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);

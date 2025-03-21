@@ -1,7 +1,6 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import mongoose from "mongoose";
 // import crypto from 'crypto'
 // crypto.randomBytes(256,(err,buffer)=>{
 //     if(err){
@@ -11,15 +10,7 @@ import mongoose from "mongoose";
 //     console.log(buffer.toString('hex'))
 // })
 
-const generateToken = (user) => {
-  return jwt.sign(
-    { id: user._id, role: user.role },
-    process.env.JWT_SECRET_KEY,
-    {
-      expiresIn: "1d",
-    }
-  );
-};
+
 //register user
 export const registerUser = async (req, res, next) => {
   const { userName, email, password, role } = req.body;
@@ -50,6 +41,15 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
+const generateToken = (user) => {
+  return jwt.sign(
+    { id: user._id, role: user.role, userName: user.userName, userEmail: user.email},
+    process.env.JWT_SECRET_KEY,
+    {
+      expiresIn: "1d",
+    }
+  );
+};
 //login user
 export const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
