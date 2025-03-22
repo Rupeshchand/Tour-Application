@@ -18,6 +18,8 @@ const bookingsSchema = new mongoose.Schema({
     },
     guestSize:{
         type:Number,
+        min: 2,
+        max: 10,
         required:true
     },
     phone:{

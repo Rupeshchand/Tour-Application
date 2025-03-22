@@ -8,17 +8,7 @@ export const createBooking = async (req, res, next) => {
   const user = await User.findById(userId);
   const fullName = user.userName;
   const userEmail = user.email;
-  //   console.log(userid,userName,userEmail)
-
   try {
-    // if (guestSize < 1 && guestSize > 10) {
-    //   return res
-    //     .status(400)
-    //     .json({
-    //       success: false,
-    //       message: "Minimum size is 2 and max size is 10",
-    //     });
-    // }
     const booking = new Booking({
       userId,
       userEmail,
@@ -31,6 +21,9 @@ export const createBooking = async (req, res, next) => {
     return res.status(200).json({ success: true, message: "Booking Created" });
   } catch (error) {
     console.log(error);
+    if(error.name === "ValidationError"){
+      return res.status(400).json({success:false,message:"Validation Failed",error:error.errors})
+    }
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });
@@ -62,7 +55,7 @@ export const getAllBookings = async (req, res, next) => {
   }
 };
 
-//get booking details
+//get single booking details by id
 export const getBookingById = async (req, res, next) => {
     const bookingId =  req.params.bookingId
   try {
