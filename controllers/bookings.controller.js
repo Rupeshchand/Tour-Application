@@ -1,6 +1,7 @@
 import Booking from "../models/bookings.model.js";
 import User from "../models/user.model.js";
 
+//create booking
 export const createBooking = async (req, res, next) => {
   const { tourName, guestSize, phone } = req.body;
   const userId = req.userId;
@@ -10,14 +11,14 @@ export const createBooking = async (req, res, next) => {
   //   console.log(userid,userName,userEmail)
 
   try {
-    if (guestSize < 1 && guestSize > 10) {
-      return res
-        .status(400)
-        .json({
-          success: false,
-          message: "Minimum size is 2 and max size is 10",
-        });
-    }
+    // if (guestSize < 1 && guestSize > 10) {
+    //   return res
+    //     .status(400)
+    //     .json({
+    //       success: false,
+    //       message: "Minimum size is 2 and max size is 10",
+    //     });
+    // }
     const booking = new Booking({
       userId,
       userEmail,
@@ -30,6 +31,50 @@ export const createBooking = async (req, res, next) => {
     return res.status(200).json({ success: true, message: "Booking Created" });
   } catch (error) {
     console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+//get all bookings for user
+export const getAllBookings = async (req, res, next) => {
+  const userId = req.userId;
+  const userName = req.userName;
+  try {
+    const bookings = await Booking.find({ userId });
+    if (bookings.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: `No bookings found on ${userName}`,
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: `Booking found on ${userName}`,
+      data: bookings,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+//get booking details
+export const getBookingById = async (req, res, next) => {
+    const bookingId =  req.params.bookingId
+  try {
+    const bookings = await Booking.findById(bookingId);
+    if(!bookings){
+      return res.status(404).json({success:false,message:"Bookin not found"})
+    }
+    return res
+      .status(200)
+      .json({ success: true, message: "Booking found", data: bookings });
+  } catch (error) {
+    console.log(error)
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });

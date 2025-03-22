@@ -13,9 +13,9 @@ export const authenticate = async (req, res, next) => {
     req.role = validatedToken.role;
     req.userName = validatedToken.userName;
     // req.userEmail = validataedToken.userEmail;
-    console.log("Token:", token);
-    console.log("Secret Key:", process.env.JWT_SECRET_KEY);
-    console.log("Validated Token:", validatedToken);
+    // console.log("Token:", token);
+    // console.log("Secret Key:", process.env.JWT_SECRET_KEY);
+    // console.log("Validated Token:", validatedToken);
     next();
   } catch (error) {
     if (error.name === "TokenExpiredError") {
