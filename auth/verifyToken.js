@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import User from "../models/user.model.js";
 export const authenticate = async (req, res, next) => {
   const authToken = req.headers.authorization;
   if (!authToken || !authToken.startsWith("Bearer")) {
@@ -22,5 +23,30 @@ export const authenticate = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Token expired" });
     }
     return res.status(401).json({ success: false, message: "Invalid token" });
+  }
+};
+
+//restricting user based on role
+export const restrict = (roles) => async (req, res, next) => {
+  const userId = req.userId;
+  try {
+    const user = await User.findById(userId);
+    const userRole = user.role;
+    if (userRole === "user" && roles.includes("user")) {
+      next();
+    } else if (userRole === "admin" && roles.includes("admin")) {
+      next();
+    } else {
+      return res
+        .status(401)
+        .json({
+          success: false,
+          message: `${userRole} is not authorized to access this data`,
+        });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };

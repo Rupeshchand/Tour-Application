@@ -20,9 +20,12 @@ export const createBooking = async (req, res, next) => {
     await booking.save();
     return res.status(200).json({ success: true, message: "Booking Created" });
   } catch (error) {
-    console.log(error);
-    if(error.name === "ValidationError"){
-      return res.status(400).json({success:false,message:"Validation Failed",error:error.errors})
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        success: false,
+        message: "Validation Failed",
+        error: error.errors,
+      });
     }
     return res
       .status(500)
@@ -57,19 +60,44 @@ export const getAllBookings = async (req, res, next) => {
 
 //get single booking details by id
 export const getBookingById = async (req, res, next) => {
-    const bookingId =  req.params.bookingId
+  const bookingId = req.params.bookingId;
   try {
-    const bookings = await Booking.findById(bookingId);
-    if(!bookings){
-      return res.status(404).json({success:false,message:"Bookin not found"})
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Bookin not found" });
     }
     return res
       .status(200)
-      .json({ success: true, message: "Booking found", data: bookings });
+      .json({ success: true, message: "Booking found", data: booking });
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return res
       .status(500)
       .json({ success: false, message: "Internal server error" });
+  }
+};
+
+//cancel booking by id
+export const cancelBooking = async (req, res, next) => {
+  const { bookingId } = req.params;
+  try {
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No booking found" });
+    }
+    // booking.status = "cancelled" //for put method
+    // await booking.save()
+    await Booking.findByIdAndDelete(bookingId); //for delete method
+    return res
+      .status(200)
+      .json({ success: true, message: "Booking cancelled successfully" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, mesage: "Internal server error" });
   }
 };

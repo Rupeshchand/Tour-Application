@@ -10,7 +10,6 @@ import jwt from "jsonwebtoken";
 //     console.log(buffer.toString('hex'))
 // })
 
-
 //register user
 export const registerUser = async (req, res, next) => {
   const { userName, email, password, role } = req.body;
@@ -43,7 +42,12 @@ export const registerUser = async (req, res, next) => {
 
 const generateToken = (user) => {
   return jwt.sign(
-    { id: user._id, role: user.role, userName: user.userName, userEmail: user.email},
+    {
+      id: user._id,
+      role: user.role,
+      userName: user.userName,
+      userEmail: user.email,
+    },
     process.env.JWT_SECRET_KEY,
     {
       expiresIn: "1d",
@@ -70,7 +74,12 @@ export const loginUser = async (req, res, next) => {
     const { password: userPassword, role, ...rest } = user._doc;
     return res
       .status(200)
-      .json({ success: true, message: "Login success", token, rest });
+      .json({
+        success: true,
+        message: "Login success",
+        token,
+        data: rest,
+      });
   } catch (error) {
     console.log(error);
     return res
