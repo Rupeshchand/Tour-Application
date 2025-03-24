@@ -59,7 +59,7 @@ export const editTour = async (req, res) => {
   }
 };
 
-//get sigle tour
+//get single tour
 export const getSingleTour = async (req, res) => {
   const tourId = req.params.id;
   try {

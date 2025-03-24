@@ -25,14 +25,7 @@ const tourSchema = new mongoose.Schema({
     required: true,
   },
   reviews: [
-    { type: mongoose.Schema.Types.ObjectId, ref: "Reviews", required: true },
-    // {
-    //     id:{
-    //         type:mongoose.Schema.Types.ObjectId,
-    //         ref:"Reviews",
-    //         required:true
-    //     }
-    // }
+    { type: mongoose.Schema.Types.ObjectId, ref: "Reviews"},
   ],
   photo: {
     type: String,
