@@ -1,24 +1,30 @@
 import Booking from "../models/bookings.model.js";
 import User from "../models/user.model.js";
+import Tours from "../models/tours.model.js"
 
 //create booking
-export const createBooking = async (req, res, next) => {
-  const { tourName, guestSize, phone } = req.body;
-  const userId = req.userId;
-  const user = await User.findById(userId);
-  const fullName = user.userName;
-  const userEmail = user.email;
+export const createBooking = async (req, res) => {
   try {
+    const { tourName, guestSize, phone } = req.body;
+    const {tourId} = req.params
+    const userId = req.userId;
+    const tour =  await Tours.findById(tourId)
+    if(!tour){
+      return res.status(404).json({success:false,json:"Tour not found"})
+    }
+    const user = await User.findById(userId);
+    // const fullName = user.userName;
+    const userEmail = user.email;
     const booking = new Booking({
       userId,
       userEmail,
-      tourName,
-      fullName,
+      tourName:tour.title,
+      fullName:user.userName,
       guestSize,
       phone,
     });
     await booking.save();
-    return res.status(200).json({ success: true, message: "Booking Created" });
+    return res.status(200).json({ success: true, message: "Booking successfull" });
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(400).json({
@@ -34,7 +40,7 @@ export const createBooking = async (req, res, next) => {
 };
 
 //get all bookings for user
-export const getAllBookings = async (req, res, next) => {
+export const getAllBookings = async (req, res) => {
   const userId = req.userId;
   const userName = req.userName;
   try {
@@ -59,7 +65,7 @@ export const getAllBookings = async (req, res, next) => {
 };
 
 //get single booking details by id
-export const getBookingById = async (req, res, next) => {
+export const getBookingById = async (req, res) => {
   const bookingId = req.params.bookingId;
   try {
     const booking = await Booking.findById(bookingId);
@@ -80,7 +86,7 @@ export const getBookingById = async (req, res, next) => {
 };
 
 //cancel booking by id
-export const cancelBooking = async (req, res, next) => {
+export const cancelBooking = async (req, res) => {
   const { bookingId } = req.params;
   try {
     const booking = await Booking.findById(bookingId);

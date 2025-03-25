@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 const bookingsSchema = new mongoose.Schema({
   userId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref:"User",
     required: true,
   },
   userEmail: {
@@ -10,6 +11,7 @@ const bookingsSchema = new mongoose.Schema({
   },
   tourName: {
     type: String,
+    ref:"Tours",
     required: true,
   },
   fullName: {
