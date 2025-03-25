@@ -13,7 +13,7 @@ const tourSchema = new mongoose.Schema({
     required: true,
   },
   distance: {
-    type: String,
+    type: Number,
     required: true,
   },
   price: {
@@ -30,6 +30,10 @@ const tourSchema = new mongoose.Schema({
   photo: {
     type: String,
     required: true,
+  },
+  maxGroupSize:{
+    type:Number,
+    required:true
   },
   featured: {
     type: Boolean,
