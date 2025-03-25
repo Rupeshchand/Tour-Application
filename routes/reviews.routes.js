@@ -8,7 +8,7 @@ import {
 } from "../controllers/reviews.controller.js";
 import { authenticate, restrict } from "../auth/verifyToken.js";
 const route = express.Router();
-route.post("/createreview/:tourId", authenticate, createReview);
+route.post("/createreview/:tourId", authenticate, restrict(["user","admin"]), createReview);
 route.put(
   "/editreview/:reviewId",
   authenticate,

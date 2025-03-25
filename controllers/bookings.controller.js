@@ -1,16 +1,16 @@
 import Booking from "../models/bookings.model.js";
 import User from "../models/user.model.js";
-import Tours from "../models/tours.model.js"
+import Tours from "../models/tours.model.js";
 
 //create booking
 export const createBooking = async (req, res) => {
   try {
-    const { tourName, guestSize, phone } = req.body;
-    const {tourId} = req.params
+    const { fullName, guestSize, phone } = req.body;
+    const { tourId } = req.params;
     const userId = req.userId;
-    const tour =  await Tours.findById(tourId)
-    if(!tour){
-      return res.status(404).json({success:false,json:"Tour not found"})
+    const tour = await Tours.findById(tourId);
+    if (!tour) {
+      return res.status(404).json({ success: false, json: "Tour not found" });
     }
     const user = await User.findById(userId);
     // const fullName = user.userName;
@@ -18,13 +18,18 @@ export const createBooking = async (req, res) => {
     const booking = new Booking({
       userId,
       userEmail,
-      tourName:tour.title,
-      fullName:user.userName,
+      tourName: tour.title,
+      fullName,
       guestSize,
       phone,
     });
     await booking.save();
-    return res.status(200).json({ success: true, message: "Booking successfull" });
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: `Booking successfully done by ${fullName}`,
+      });
   } catch (error) {
     if (error.name === "ValidationError") {
       return res.status(400).json({
