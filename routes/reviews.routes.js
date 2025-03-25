@@ -4,6 +4,7 @@ import {
   deleteReview,
   editReview,
   getAllReviews,
+  getReviews
 } from "../controllers/reviews.controller.js";
 import { authenticate, restrict } from "../auth/verifyToken.js";
 const route = express.Router();
@@ -25,5 +26,11 @@ route.get(
   authenticate,
   restrict(["user", "admin"]),
   getAllReviews
+);
+route.get(
+  "/getreviews/:tourId",
+  authenticate,
+  restrict(["user", "admin"]),
+  getReviews
 );
 export default route;
