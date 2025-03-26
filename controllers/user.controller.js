@@ -11,7 +11,7 @@ import jwt from "jsonwebtoken";
 // })
 
 //register user
-export const registerUser = async (req, res, next) => {
+export const registerUser = async (req, res) => {
   const { userName, email, password, role } = req.body;
   try {
     const userEmail = await User.findOne({ email: email });
@@ -40,6 +40,7 @@ export const registerUser = async (req, res, next) => {
   }
 };
 
+//generate token
 const generateToken = (user) => {
   return jwt.sign(
     {
@@ -54,8 +55,9 @@ const generateToken = (user) => {
     }
   );
 };
+
 //login user
-export const loginUser = async (req, res, next) => {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email: email });
@@ -72,14 +74,12 @@ export const loginUser = async (req, res, next) => {
     }
     const token = generateToken(user);
     const { password: userPassword, role, ...rest } = user._doc;
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Login success",
-        token,
-        data: rest,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Login success",
+      token,
+      data: rest,
+    });
   } catch (error) {
     console.log(error);
     return res
@@ -89,7 +89,7 @@ export const loginUser = async (req, res, next) => {
 };
 
 //getall users
-export const getAllUsers = async (req, res, next) => {
+export const getAllUsers = async (req, res) => {
   try {
     const user = await User.find().select("-password");
     if (!user) {
@@ -108,12 +108,14 @@ export const getAllUsers = async (req, res, next) => {
 };
 
 //edit user
-export const editUser = async (req, res, next) => {
+export const editUser = async (req, res) => {
   const userId = req.params.id;
   try {
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ success: false, message: "Invalid" });
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
     }
     await User.findByIdAndUpdate(userId, { $set: req.body }, { new: true });
     return res.status(200).json({ success: true, message: "User edited" });

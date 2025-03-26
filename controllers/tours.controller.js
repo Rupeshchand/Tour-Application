@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import Tours from "../models/tours.model.js";
-import Bookings from "../models/bookings.model.js";
+// import Bookings from "../models/bookings.model.js";
 
 //create tour
 export const createTour = async (req, res) => {
@@ -29,11 +29,21 @@ export const createTour = async (req, res) => {
       maxGroupSize,
       featured,
     });
-    // if(tours){
-    //   return res.status(400).json({success:false,message:"Tour is already created"})
-    // }
+    if (tours) {
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: `Tour is already created on ${tours.title}`,
+        });
+    }
     if (!maxGroupSize) {
-      return res.status(400).json({ success: false, message: "max" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "You should mention the maximum group size",
+        });
     }
     await tours.save();
     return res
@@ -51,6 +61,11 @@ export const createTour = async (req, res) => {
 export const editTour = async (req, res) => {
   const tourId = req.params.id;
   try {
+    if (!mongoose.Types.ObjectId.isValid) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Tour ID is not valid" });
+    }
     const tour = await Tours.findById(tourId);
     if (!tour) {
       return res
@@ -72,7 +87,9 @@ export const getSingleTour = async (req, res) => {
   const tourId = req.params.id;
   try {
     if (!mongoose.Types.ObjectId.isValid(tourId)) {
-      return res.status(400).json({ success: false, message: "ID not found" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Tour ID is not valid" });
     }
     const tour = await Tours.findById(tourId);
     if (!tour) {
@@ -125,7 +142,9 @@ export const deleteTour = async (req, res) => {
   const tourId = req.params.id;
   try {
     if (!mongoose.Types.ObjectId.isValid(tourId)) {
-      return res.status(400).json({ success: false, message: "ID not found" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Tour ID is not valid" });
     }
     const tour = await Tours.findById(tourId);
     if (!tour) {
@@ -145,7 +164,6 @@ export const deleteTour = async (req, res) => {
 //get tours by queries
 export const getToursOnQueries = async (req, res) => {
   const { city, distance, maxGroupSize } = req.query;
-  console.log(city, distance, maxGroupSize);
   try {
     // let filter = {}; //This object will store conditions for filtering tours in the database.
     // if (city) {
@@ -159,13 +177,13 @@ export const getToursOnQueries = async (req, res) => {
     // }
     const tours = await Tours.find({
       city: { $regex: city, $options: "i" },
-      distance:distance,
-      maxGroupSize:maxGroupSize,
+      distance: distance,
+      maxGroupSize: maxGroupSize,
     });
-    if (tours.length === 0) {
+    if (!tours || tours.length === 0) {
       return res
         .status(404)
-        .json({ success: false, message: "Sorry No Trip Found" });
+        .json({ success: false, message: "Sorry! No Trip Found" });
     }
     return res
       .status(200)

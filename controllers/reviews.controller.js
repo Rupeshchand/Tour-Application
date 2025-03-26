@@ -4,13 +4,24 @@ import Tours from "../models/tours.model.js";
 import mongoose from "mongoose";
 
 //create review
-export const createReview = async (req, res, next) => {
+export const createReview = async (req, res) => {
   try {
     const userId = req.userId;
+    // if(!userId){
+    //   return res.status(404).json({success:false,message:"User ID not found"})
+    // }
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "No user found" });
+    }
     const userName = user.userName;
     const { reviewText, rating } = req.body;
     const { tourId } = req.params;
+    if (!mongoose.Types.ObjectId.isValid(tourId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Tour Id is not valid" });
+    }
     const tours = await Tours.findById(tourId);
     const tourName = tours.title;
     const review = new Reviews({
@@ -62,28 +73,6 @@ export const editReview = async (req, res) => {
   }
 };
 
-//delete review
-export const deleteReview = async (req, res) => {
-  const { reviewId } = req.params;
-  try {
-    const review = await Reviews.findById(reviewId);
-    if (!review) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Review not found" });
-    }
-    await Reviews.findByIdAndDelete(reviewId);
-    return res
-      .status(200)
-      .json({ success: true, message: "Review deleted successfully" });
-  } catch (error) {
-    console.log(error);
-    return res
-      .status(500)
-      .json({ success: false, message: "Internal server error" });
-  }
-};
-
 //get all reviews
 export const getAllReviews = async (req, res) => {
   try {
@@ -126,14 +115,39 @@ export const getReviews = async (req, res) => {
         message: `No review found on this ${tours.title}`,
       });
     }
+    return res.status(200).json({
+      success: true,
+      message: `Reviews found on ${tours.title}`,
+      reviews,
+      count: reviews.length,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
+//delete review
+export const deleteReview = async (req, res) => {
+  const { reviewId } = req.params;
+  try {
+    if (!reviewId) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No review found" });
+    }
+    const review = await Reviews.findById(reviewId);
+    if (!review) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Review not found" });
+    }
+    await Reviews.findByIdAndDelete(reviewId);
     return res
       .status(200)
-      .json({
-        success: true,
-        message: `Reviews found on ${tours.title}`,
-        reviews,
-        count: reviews.length,
-      });
+      .json({ success: true, message: "Review deleted successfully" });
   } catch (error) {
     console.log(error);
     return res
