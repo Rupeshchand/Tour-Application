@@ -8,6 +8,7 @@ import userRoutes from "./routes/user.routes.js";
 import review from "./routes/reviews.routes.js";
 import booking from "./routes/booking.routes.js";
 import images from "./routes/images.routes.js";
+import about from "./routes/about.routes.js";
 const app = express();
 const port = process.env.PORT || 6000;
 const allowedUrls = ["http:localhost:5173"];
@@ -31,6 +32,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/review", review);
 app.use("/api/booking", booking);
 app.use("/api/images", images);
+app.use("/api",about)
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);

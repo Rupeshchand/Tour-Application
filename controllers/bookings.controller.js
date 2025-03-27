@@ -51,13 +51,36 @@ export const createBooking = async (req, res) => {
   }
 };
 
+//get all bookings
+export const getAllBooking = async (req, res) => {
+  try {
+    const bookings = await Booking.find();
+    if (!bookings || bookings.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No bookings found",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Booking found",
+      data: bookings,
+    });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
+
 //get all bookings for user
-export const getAllBookings = async (req, res) => {
+export const getBookingsOnUserId = async (req, res) => {
   const userId = req.userId;
   const userName = req.userName;
   try {
     const bookings = await Booking.find({ userId });
-    if (!booking || bookings.length === 0) {
+    if (!bookings || bookings.length === 0) {
       return res.status(404).json({
         success: false,
         message: `No bookings found on ${userName}`,
@@ -76,6 +99,34 @@ export const getAllBookings = async (req, res) => {
   }
 };
 
+//edit booking
+export const editBooking = async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    console.log(bookingId);
+    if (!mongoose.Types.ObjectId.isValid(bookingId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Booking ID is not valid" });
+    }
+    const booking = await Booking.findById(bookingId);
+    if (!booking) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No Booking found on this ID" });
+    }
+    await Booking.findByIdAndUpdate(
+      bookingId,
+      { $set: req.body },
+      { new: true }
+    );
+    return res.status(200).json({ success: true, message: "Booking edited" });
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+};
 //get single booking details by id
 export const getBookingById = async (req, res) => {
   try {
