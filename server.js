@@ -10,8 +10,8 @@ import booking from "./routes/booking.routes.js";
 import images from "./routes/images.routes.js";
 import about from "./routes/about.routes.js";
 const app = express();
-const port = process.env.PORT || 6000;
-const allowedUrls = ["http:localhost:5173"];
+const port = process.env.PORT || 5000;
+const allowedUrls = ["http://localhost:5173"];
 app.use(
   cors({
     origin: function (origin, callback) {
