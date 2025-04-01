@@ -84,7 +84,7 @@ export const getAllReviews = async (req, res) => {
     }
     return res
       .status(200)
-      .json({ success: true, message: "Reviews found", reviews });
+      .json({ success: true, message: "Reviews found", reviews, count: reviews.length });
   } catch (error) {
     return res
       .status(500)

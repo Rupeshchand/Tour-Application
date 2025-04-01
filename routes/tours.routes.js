@@ -12,13 +12,13 @@ const route = express.Router();
 // "http://localhost/api/tour/createtour"
 route.post("/createtour", authenticate, restrict(["admin"]), createTour);
 route.put("/edittour/:id", authenticate, restrict(["admin"]), editTour);
-route.get(
-  "/getsingletour/:id",
-  authenticate,
-  restrict(["admin","user"]),
-  getSingleTour
-);
+route.get("/getsingletour/:id", getSingleTour);
 route.get("/getalltours", getAllTours);
 route.delete("/deletetour/:id", restrict(["admin"]), deleteTour);
-route.get("/search",authenticate, restrict(["admin","user"]), getToursOnQueries);
+route.get(
+  "/search",
+  authenticate,
+  restrict(["admin", "user"]),
+  getToursOnQueries
+);
 export default route;

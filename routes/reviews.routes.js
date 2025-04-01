@@ -34,8 +34,6 @@ route.get(
 );
 route.get(
   "/getreviews/:tourId",
-  authenticate,
-  restrict(["user", "admin"]),
   getReviews
 );
 export default route;

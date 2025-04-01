@@ -126,7 +126,7 @@ export const getAllTours = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Tours found",
-      data: tours,
+      tours,
       pagination: { totalTours, totalPages, currentPage: page, limit },
     });
   } catch (error) {
