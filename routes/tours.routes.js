@@ -17,8 +17,6 @@ route.get("/getalltours", getAllTours);
 route.delete("/deletetour/:id", restrict(["admin"]), deleteTour);
 route.get(
   "/search",
-  authenticate,
-  restrict(["admin", "user"]),
   getToursOnQueries
 );
 export default route;
