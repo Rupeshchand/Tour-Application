@@ -82,9 +82,12 @@ export const getAllReviews = async (req, res) => {
         .status(404)
         .json({ success: false, message: "No reviews found" });
     }
-    return res
-      .status(200)
-      .json({ success: true, message: "Reviews found", reviews, count: reviews.length });
+    return res.status(200).json({
+      success: true,
+      message: "Reviews found",
+      reviews,
+      count: reviews.length,
+    });
   } catch (error) {
     return res
       .status(500)
@@ -115,11 +118,14 @@ export const getReviews = async (req, res) => {
         message: `No review found on this ${tours.title}`,
       });
     }
+    const avgRatings =
+      reviews.reduce((acc, review) => review.rating + acc, 0) / reviews.length;
     return res.status(200).json({
       success: true,
       message: `Reviews found on ${tours.title}`,
       reviews,
       count: reviews.length,
+      avgRatings,
     });
   } catch (error) {
     console.log(error);

@@ -115,7 +115,7 @@ export const getAllTours = async (req, res) => {
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const skip = (page - 1) * limit;
-    const tours = await Tours.find().skip(skip).limit(limit);
+    const tours = await Tours.find().skip(skip).limit(limit).populate("reviews");
     const totalTours = await Tours.countDocuments(); //This counts the total number of documents in the Tours collection.
     const totalPages = Math.ceil(totalTours / limit); //This calculates the total number of pages required to display all results.
     if (!tours || tours.length === 0) {
@@ -123,10 +123,19 @@ export const getAllTours = async (req, res) => {
         .status(404)
         .json({ success: false, message: "Tours not found" });
     }
+    const reviewsDetails = tours.map(tour => {
+      const reviewCount = tour.reviews.length
+      const avgRating = reviewCount === 0 ? 0 : tour.reviews.reduce((acc,review) => acc+review.rating, 0) / reviewCount
+      return {
+        reviewCount,
+        avgRating
+      }
+    })
     return res.status(200).json({
       success: true,
       message: "Tours found",
       tours,
+      reviewsDetails, 
       pagination: { totalTours, totalPages, currentPage: page, limit },
     });
   } catch (error) {

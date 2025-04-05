@@ -28,8 +28,6 @@ route.delete(
 );
 route.get(
   "/getallreviews",
-  authenticate,
-  restrict(["user", "admin"]),
   getAllReviews
 );
 route.get(
