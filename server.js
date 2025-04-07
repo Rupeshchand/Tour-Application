@@ -11,7 +11,10 @@ import images from "./routes/images.routes.js";
 import about from "./routes/about.routes.js";
 const app = express();
 const port = process.env.PORT || 5000;
-const allowedUrls = ["http://localhost:5173", "https://tour-planner-three.vercel.app"];
+const allowedUrls = [
+  "http://localhost:5173",
+  "https://tour-planner-three.vercel.app",
+];
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -32,7 +35,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/review", review);
 app.use("/api/booking", booking);
 app.use("/api/images", images);
-app.use("/api",about)
+app.use("/api", about);
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
