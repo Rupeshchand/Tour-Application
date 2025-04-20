@@ -115,7 +115,23 @@ export const getAllTours = async (req, res) => {
     page = parseInt(page) || 1;
     limit = parseInt(limit) || 10;
     const skip = (page - 1) * limit;
-    const tours = await Tours.find().skip(skip).limit(limit).populate("reviews");
+    // const tours = await Tours.find().skip(skip).limit(limit).populate("reviews"); //populate is used to fetch the referenced document from other collections with the help of Object Id
+    const tours = await Tours.aggregate([
+      {
+        $lookup: {
+          from: "reviews",
+          localField: "_id",
+          foreignField: "tourId",
+          as: "reviews"
+        }
+      },
+      {
+        $skip: skip
+      },
+      {
+        $limit: limit
+      }
+    ])
     const totalTours = await Tours.countDocuments(); //This counts the total number of documents in the Tours collection.
     const totalPages = Math.ceil(totalTours / limit); //This calculates the total number of pages required to display all results.
     if (!tours || tours.length === 0) {
